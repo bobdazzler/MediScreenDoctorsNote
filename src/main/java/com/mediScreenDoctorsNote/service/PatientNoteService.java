@@ -58,6 +58,6 @@ public class PatientNoteService {
 	 * @return PatientNote
 	 */
 	public List<PatientNote> getListOfPatientNoteById(int id) {
-		return patientsNoteRepository.findPatientNoteById(id);
+		return patientsNoteRepository.findAllByPatientId(id);
 	}
 }

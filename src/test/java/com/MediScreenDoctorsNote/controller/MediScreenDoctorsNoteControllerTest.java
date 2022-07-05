@@ -50,7 +50,11 @@ public class MediScreenDoctorsNoteControllerTest {
 
 	@Test
 	public void testShowPatientNoteForm() {
-		ModelAndView modelAndView = mediScreenDoctorsController.showPatientNoteForm();
+		PatientNote patientNote = new PatientNote();
+        patientNote.setPatientId(1);
+        patientNote.setId("1234567890");
+        patientNote.setNote("Note for a patient who is doing well");
+		ModelAndView modelAndView = mediScreenDoctorsController.showPatientNoteForm(patientNote);
 		Assert.assertEquals("addPatientNote", modelAndView.getViewName());
 	}
 

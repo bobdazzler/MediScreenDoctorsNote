@@ -31,7 +31,12 @@ public class MediScreenDoctorsNoteController {
 	public MediScreenDoctorsNoteController(PatientNoteService patientNoteService) {
 		this.patientNoteService = patientNoteService;
 	}
-
+	/**
+	 * 
+	 * @param patId
+	 * @param note
+	 * @return save doctors note for a patient to DB
+	 */
 	@PostMapping("/patHistory/add")
 	public String addPatientsNotes(@RequestParam int patId, @RequestParam String note) {
 		PatientNote patientNote = new PatientNote();
@@ -40,25 +45,46 @@ public class MediScreenDoctorsNoteController {
 		patientNoteService.savePatientNote(patientNote);
 		return "Patient Note Saved";
 	}
-
+	/**
+	 * 
+	 * @param id
+	 * @param model
+	 * @return returns a list of notes by a doctor in a UI format for a patient
+	 */
 	@RequestMapping("/patHistory/list/{id}")
 	public ModelAndView listOfPatHistoryById(@PathVariable("id") Integer id, Model model) {
 		List<PatientNote> patientNotes = patientNoteService.getListOfPatientNoteById(id);
+		logger.info("patient note is : "+patientNotes);
 		model.addAttribute("patientNotes", patientNotes);
 		return new ModelAndView("patientNoteHistory");
 	}
+	/**
+	 * 
+	 * @param patientNote
+	 * @return a form for saving a doctors note for a patient
+	 */
 
 	@GetMapping("/patHistory/add")
-	public ModelAndView showPatientNoteForm() {
+	public ModelAndView showPatientNoteForm(@ModelAttribute("patientNote") PatientNote patientNote ){
 		return new ModelAndView("addPatientNote");
 	}
-
+	/**
+	 * 
+	 * @param model
+	 * @return a list of all notes saved in DB
+	 */
 	@GetMapping("/patHistory/list")
-	public ModelAndView listOfAllPatHistory(Model model) {
+	public ModelAndView listOfAllPatHistory( Model model) {
 		model.addAttribute("generalPatientNotes", patientNoteService.getListOfAllPateintNote());
 		return new ModelAndView("allPatientHistoryList");
 	}
-
+	/**
+	 * 
+	 * @param patientNote
+	 * @param result
+	 * @param model
+	 * @return saves notes for a patient 
+	 */
 	@PostMapping("/patHistory/validate")
 	public ModelAndView validate(@Valid @ModelAttribute("patientNote") PatientNote patientNote, BindingResult result,
 			Model model) {
@@ -70,14 +96,26 @@ public class MediScreenDoctorsNoteController {
 
 		return new ModelAndView("patHistory/add");
 	}
-
+	/**
+	 * 
+	 * @param id
+	 * @param model
+	 * @return a patient note to be modified
+	 */
 	@GetMapping("/patHistory/update/{id}")
 	public ModelAndView showUpdateForm(@PathVariable("id") String id, Model model) {
 		PatientNote patientNote = patientNoteService.getPatientNoteById(id);
 		model.addAttribute("patientNote", patientNote);
 		return new ModelAndView("patHistoryupdate");
 	}
-
+	/**
+	 * 
+	 * @param id
+	 * @param patientNote
+	 * @param result
+	 * @param model
+	 * @return a patient note list after modification to a note is saved  
+	 */
 	@PostMapping("/patHistory/update/{id}")
 	public ModelAndView updatePatientNote(@PathVariable("id") String id, @Valid PatientNote patientNote,
 			BindingResult result, Model model) {
@@ -87,11 +125,26 @@ public class MediScreenDoctorsNoteController {
 		patientNoteService.savePatientNote(patientNote);
 		return new ModelAndView("redirect:/patHistory/list");
 	}
-
+	/**
+	 * 
+	 * @param id
+	 * @param model
+	 * @return delete a note by id
+	 */
 	@GetMapping("/patHistory/delete/{id}")
 	public ModelAndView deletePatientNote(@PathVariable("id") String id, Model model) {
 		patientNoteService.deletePatientNote(id);
 		logger.info(id + " successfully deleted");
 		return new ModelAndView("redirect:/patHistory/list");
+	}
+	/**
+	 * 
+	 * @param id
+	 * @return return a list of patient notes
+	 */
+	@GetMapping("/patHistory/list/{id}")
+	public List<PatientNote> getPatientById(@PathVariable("id") Integer id){
+		List<PatientNote> patientNotes = patientNoteService.getListOfPatientNoteById(id);
+		return patientNotes;
 	}
 }
